@@ -1,12 +1,12 @@
 module.exports = {
     title: 'wuquan的博客',
-    base:"/blog",
+    base:"/blog/",
     description: '一个学不好吉他的资深前端Jay迷',
     head: [
         [
         'link', {
             rel: 'icon',
-            href: `./docs/public/index.jpg`
+            href: `./docs/public/img/index.jpg`
         }]
     ],
     dest: './blog',
