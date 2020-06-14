@@ -1,2 +1,1 @@
-# kabuda.github.io
-blog
+Blog
