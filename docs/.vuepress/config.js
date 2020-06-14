@@ -8,7 +8,7 @@ module.exports = {
             href: `./docs/public/index.jpg`
         }]
     ],
-    dest: './dist',
+    dest: './blog',
     ga: '',
     evergreen: true,
     themeConfig: {

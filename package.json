@@ -1,5 +1,24 @@
-{    "scripts": {
-      "dev": "vuepress dev docs",
-      "build": "vuepress build docs"
-    }
-  }
+{
+  "scripts": {
+    "dev": "vuepress dev docs",
+    "build": "vuepress build docs"
+  },
+  "name": "kabuda.github.io",
+  "description": "Blog",
+  "version": "1.0.0",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kabuda/kabuda.github.io.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kabuda/kabuda.github.io/issues"
+  },
+  "homepage": "https://github.com/kabuda/kabuda.github.io#readme"
+}
