@@ -9,7 +9,7 @@ module.exports = {
             href: `/public/index.jpg`
         }]
     ],
-    dest: './docs/.vuepress/dist',
+    dest: './dist',
     ga: '',
     evergreen: true,
     themeConfig: {
