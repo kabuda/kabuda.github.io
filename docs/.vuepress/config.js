@@ -6,7 +6,7 @@ module.exports = {
         [
         'link', {
             rel: 'icon',
-            href: `./docs/public/index.jpg`
+            href: `../docs/public/index.jpg`
         }]
     ],
     dest: './blog',
