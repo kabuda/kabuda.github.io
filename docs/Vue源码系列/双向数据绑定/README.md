@@ -1,0 +1,219 @@
+
+
+## 前言
+
+![Vue源码双向数据绑定过程](D:\lls\wuquan\Desktop\博客\Vue源码\双向数据绑定\Vue源码双向数据绑定过程.png)
+
+开始之前，先来看一张Vue的双向数据绑定流程图。
+
+整体来说，Vue的双向数据绑定过程需要`Oberservers` 、`Watcher`、`Dep`三者的参与，采用发布-订阅的设计模式。
+
+- `Oberserver`是观察者，利用`Object.defineProperty`来递归劫持对象的属性。
+
+- `Dep`是发布者，负责接受来自于观察者的通知，做消息分发、储存订阅者等功能。
+
+- `Watcher`是订阅者，他可以通知到模块上做`update`。
+
+  
+
+### 初始化数据
+
+从流程图的最左边开始。首先是用new操作符新建一个MVVM对象，应该说是新建一个Vue实例的过程。
+
+根据我们日常对Vue的使用习惯，Vue实例应当有`data/methods/props/computed/watch`等等属性。
+
+新建对象这个过程便是对这些数据属性的初始化，值得注意的是其实data原本下挂在对象的`options`属性里面。
+
+```javascript
+class Vue {
+  constructor(options){
+     this.data = options.data;
+  }
+}
+```
+
+
+
+而我们一般访问如下变量时，采用的是`this.a`，而不是`this.data.a`。 
+
+ ```javascript
+data(){
+  return {
+     a:1 
+  }
+}
+console.log(this.a);    // 1
+ ```
+
+
+
+这个过程是通过做了一次代理做到的，实际上这个代理的过程也很简单。就是遍历各个属性，通过`getter`函数返回简化过的值。
+
+```javascript
+_proxy.call(this,options.data);
+function _proxy(data){
+   const that = this;
+   Object.keys(data).forEach(key=>{
+      Object.defineProperty(that,key,{
+        enumerable:true,
+        configurable:true,
+        getter:() => {
+          return that._data[key];
+        },
+        setter:(newVal)=>{
+          that._data[key] = newVal;
+        }
+      })
+   }) 
+  
+}
+```
+
+
+
+## Observer
+
+`Observer`在Vue的双向数据绑定过程中扮演观察者的角色，主要功能是递归监听`data`属性里面的值。下面我们来看看`Oberserver`做了什么
+
+```javascript
+class Observer{
+  construtors(data){
+     this.deps = [];
+     this.walk(data);
+  }
+  
+  walk(obj){       // 遍历所有data属性
+     Object.keys(obj).forEach(key=>{
+       this.defineReactive(obj,key,obj[key])
+     })
+  }
+  
+  // 劫持属性
+  defineReactive(obj,key,data){
+    if(typeof data == "object"){
+       obj[key] = new Observer(data);
+    }
+    Object.defineProperty(obj,key,{
+        enumerable:true,
+        configurable:true,
+        getter:function() {
+        if (Dep.target) {
+           dep.depend()  // 收集依赖
+           // ...
+          }
+          return data;   
+        },
+        setter:function(newVal)=>{
+          obj[key] = newVal;
+          dep.notify()  // 通知相关依赖进行更新
+        }
+     
+    }) 
+  }
+    
+
+}
+```
+
+
+
+首先`Observer`会使用`walk`方法递归遍历`data`属性，其实将`data`属性的每个`key`值的`getter`函数/`setter`函数劫持起来，注意还有深层递归的情况。这个过程是使用`Object.defineProperty`方法来完成的，这就是Vue不支持IE8以下浏览器的原因。
+
+回到我们刚才那张流程图，Observer跟Dep是有交互过程的。
+
+既然Observer可以用来监听data属性的变化，那可以做这么两件事情：
+
+- 当data属性中有一个值被获取到时，getter函数将会被触发。Dep是事件发布中心，我得先让他添加进去管控着。这个过程可以理解为低配版寄车，当车进入停车场时(getter函数触发)，此时寄车处的老大爷会给你一张卡，他自个儿也保留了一张卡(收集依赖的过程)。
+
+- 当data属性中有一个key被修改时，将会触发setter函数。此时将通知相关依赖进行更新。
+
+
+
+## 缺陷
+
+   当利用`Object.defineProperty`来做监听数组的变化时，除了把这个数组重新赋值以外，不会触发setter方法，不会触发视图更新。实际上，对一个对象添加删除新属性都不会触发视图更新，新增的属性需要手动再次使用`Object.defineProperty()`进行监听，`$set`就是通过调用`Object.defineProperty()`去处理的。
+
+
+
+```javascript
+var arr = [1, 2, 3];
+Object.keys(arr).forEach(key => {
+    Object.defineProperty(arr, key, {
+        configurable: true,
+        enumerable: true,
+        get: () => {
+            return arr[key]
+        },
+        set: (newVal) => {
+            console.log(`数组被修改了${newVal}`);
+        }
+
+    })
+})
+arr.push(4);
+```
+
+
+
+ Vue作者基于此做了数组的八大方法做Hack，即八个会修改到原有的length和index的方法。即`pop`、`push`、`shift`、`unshift`、`splice`、`sort`、`reverse`
+
+```javascript
+// 数组的原型
+const prototype = Array.prototype
+// 创建一个新的原型对象，他的原型是数组的原型（于是newPrototype上具有所有数组的api）
+const newPrototype = Object.create(prototype)
+const methods = ['push', 'pop', 'shift', 'unshift', 'splice', 'sort', 'reverse']
+methods.forEach(method => {
+    newPrototype[method] = () => {
+        prototype[method].call(this, ...args)
+        // 视图更新
+        renderView()
+    }
+})
+```
+
+
+
+## Vue3.0的改进
+
+观察者这边用Proxy解决了数组监听和递归遍历属性的问题，而且proxy要比defineProperty更加强大，包含13种获取方式。
+
+```javascript
+const obj = {
+    name: 'app',
+    age: '18',
+    a: {
+        b: 1,
+        c: 2,
+    },
+}
+const p = new Proxy(obj, {
+    get(target, propKey, receiver) {
+        console.log('你访问了' + propKey);
+        return Reflect.get(target, propKey, receiver);
+    },
+    set(target, propKey, value, receiver) {
+        console.log('你设置了' + propKey);
+        console.log('新的' + propKey + '=' + value);
+        Reflect.set(target, propKey, value, receiver);
+    }
+});
+p.age = '20';
+console.log(p.age);
+p.newPropKey = '新属性';
+console.log(p.newPropKey);
+p.a.d = '这是obj中a的属性';
+console.log(p.a.d);
+
+```
+
+
+
+
+
+
+
+
+
+
+
