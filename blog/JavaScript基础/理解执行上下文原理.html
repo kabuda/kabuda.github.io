@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>理解执行上下文原理 | wuquan的博客</title>
+    <meta name="generator" content="VuePress 1.5.2">
+    
+    <meta name="description" content="一个成长中的小前端">
+    <link rel="preload" href="/blog/assets/css/0.styles.f9b52b88.css" as="style"><link rel="preload" href="/blog/assets/js/app.651a061f.js" as="script"><link rel="preload" href="/blog/assets/js/2.f6cfd785.js" as="script"><link rel="preload" href="/blog/assets/js/12.18bd0417.js" as="script"><link rel="prefetch" href="/blog/assets/js/10.5c0c98d8.js"><link rel="prefetch" href="/blog/assets/js/11.6de5224c.js"><link rel="prefetch" href="/blog/assets/js/13.d761da11.js"><link rel="prefetch" href="/blog/assets/js/14.cb04a273.js"><link rel="prefetch" href="/blog/assets/js/15.b3994658.js"><link rel="prefetch" href="/blog/assets/js/16.8bca3f8f.js"><link rel="prefetch" href="/blog/assets/js/17.268a216f.js"><link rel="prefetch" href="/blog/assets/js/18.11777201.js"><link rel="prefetch" href="/blog/assets/js/19.c40babfc.js"><link rel="prefetch" href="/blog/assets/js/20.f74223f6.js"><link rel="prefetch" href="/blog/assets/js/21.f1144ac9.js"><link rel="prefetch" href="/blog/assets/js/22.a6867729.js"><link rel="prefetch" href="/blog/assets/js/3.631be03b.js"><link rel="prefetch" href="/blog/assets/js/4.63208f36.js"><link rel="prefetch" href="/blog/assets/js/5.8b84e1a1.js"><link rel="prefetch" href="/blog/assets/js/6.57ced8e1.js"><link rel="prefetch" href="/blog/assets/js/7.de3b9d29.js"><link rel="prefetch" href="/blog/assets/js/8.760b0fa6.js"><link rel="prefetch" href="/blog/assets/js/9.9d5aa4a8.js">
+    <link rel="stylesheet" href="/blog/assets/css/0.styles.f9b52b88.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/blog/" class="home-link router-link-active"><!----> <span class="site-name">wuquan的博客</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/blog/" class="nav-link">
+  首页
+</a></div><div class="nav-item"><a href="/blog/Vue源码系列/双向数据绑定/" class="nav-link">
+  博客
+</a></div><div class="nav-item"><a href="https://github.com/kabuda/kabuda.github.io" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  github
+  <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></div> <!----></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/blog/" class="nav-link">
+  首页
+</a></div><div class="nav-item"><a href="/blog/Vue源码系列/双向数据绑定/" class="nav-link">
+  博客
+</a></div><div class="nav-item"><a href="https://github.com/kabuda/kabuda.github.io" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  github
+  <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></div> <!----></nav>  <ul class="sidebar-links"><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading open"><span>Java Script基础</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/blog/JavaScript基础/EventLoop.html" class="sidebar-link">事件循环</a></li><li><a href="/blog/JavaScript基础/Promise.html" class="sidebar-link">创作中...</a></li><li><a href="/blog/JavaScript基础/函数科里化.html" class="sidebar-link">函数科里化</a></li><li><a href="/blog/JavaScript基础/原型链.html" class="sidebar-link">创作中...</a></li><li><a href="/blog/JavaScript基础/声明提升与作用域.html" class="sidebar-link">声明提升与作用域</a></li><li><a href="/blog/JavaScript基础/手写常用函数.html" class="sidebar-link">创作中...</a></li><li><a href="/blog/JavaScript基础/正则表达式高级.html" class="sidebar-link">创作中...</a></li><li><a href="/blog/JavaScript基础/理解执行上下文原理.html" class="active sidebar-link">理解执行上下文原理</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/blog/JavaScript基础/理解执行上下文原理.html#理解执行上下文原理" class="sidebar-link">理解执行上下文原理</a></li><li class="sidebar-sub-header"><a href="/blog/JavaScript基础/理解执行上下文原理.html#执行上下文" class="sidebar-link">执行上下文</a></li><li class="sidebar-sub-header"><a href="/blog/JavaScript基础/理解执行上下文原理.html#小结" class="sidebar-link">小结</a></li></ul></li><li><a href="/blog/JavaScript基础/理解执行栈与This指向.html" class="sidebar-link">理解执行栈与This指向</a></li></ul></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Vue源码系列</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Http知识</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>数据结构与算法</span> <span class="arrow right"></span></p> <!----></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h2 id="理解执行上下文原理"><a href="#理解执行上下文原理" class="header-anchor">#</a> 理解执行上下文原理</h2> <p>前面一篇文章写了关于声明提升和作用域在结论层面的一些理解，应该说仅仅是知其然而不知其所以然。这一篇文章让我们从JavaScript的执行上下文原理层面来探讨代码的执行机制。</p> <p>结合思维导图服用更佳!
+<img src="https://www.helloimg.com/images/2020/06/20/df927759fba6099141cfdeabbb88e5693105f5149242bb6a.png" alt="df927759fba6099141cfdeabbb88e5693105f5149242bb6a.png"></p> <h2 id="执行上下文"><a href="#执行上下文" class="header-anchor">#</a> 执行上下文</h2> <p>执行上下文是当前 JavaScript 代码被解析和执行时所在环境的抽象概念。代码在执行过程中，会创建对应的上下文。</p> <p>前面我们说到作用域包括全局作用域、函数作用域、eval作用域。而从类型上区分，执行上下文同样包括全局上下文、函数上下文、eval上下文。同样的，eval上下文此处不做讲解。</p> <p>从阶段层面划分，执行上下文有<strong>创建阶段</strong>和<strong>执行阶段</strong>。这个才是我们要探讨的重点。</p> <h3 id="创建阶段"><a href="#创建阶段" class="header-anchor">#</a> 创建阶段</h3> <p>无论是全局上下文，还是函数执行上下文，在创建阶段都会做以下三件事情：<strong>创建词法环境组件、创建变量环境组件、确定This指向</strong>。</p> <h4 id="创建词法环境组件"><a href="#创建词法环境组件" class="header-anchor">#</a> 创建词法环境组件</h4> <blockquote><p><strong>词法环境</strong>是一种规范类型，基于 ECMAScript 代码的词法嵌套结构来定义<strong>标识符</strong>和具体变量和函数的关联。一个词法环境由环境记录器和一个可能的引用<strong>外部</strong>词法环境的空值组成。</p></blockquote> <p>上面这段为ES6官方文档的解释，依照概念，我们把词法环境组件定义为lexicalEnviroment对象，包括<strong>环境记录器</strong>和<strong>外部环境引用</strong></p> <p><strong>环境记录器</strong>是存储变量和函数声明的实际位置，准确来说在<strong>全局上下文时</strong>此处只做<code>let</code>和<code>const</code>的初始化，函数声明提升。而在<strong>函数执行上下文时还需多增加一个函数参数的存储</strong>。</p> <p><strong>外部环境的引用</strong>意味着它可以访问其父级词法环境（作用域）</p> <p>举个例子：</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code><span class="token keyword">let</span> a <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> b <span class="token operator">=</span> <span class="token number">2</span><span class="token punctuation">;</span>
+<span class="token keyword">function</span> <span class="token function">foo</span><span class="token punctuation">(</span><span class="token parameter">e<span class="token punctuation">,</span>f</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+ <span class="token keyword">let</span> c <span class="token operator">=</span> <span class="token number">3</span><span class="token punctuation">;</span>
+ <span class="token keyword">const</span> d <span class="token operator">=</span> <span class="token number">4</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+<span class="token function">foo</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre></div><p>则这段代码对应执行上下文在创建阶段创建的词法环境组件是这样子的</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code>globalContext <span class="token operator">=</span> <span class="token punctuation">{</span>
+    lexicalEnviroment<span class="token operator">:</span><span class="token punctuation">{</span>
+      enviromentRecord<span class="token operator">:</span><span class="token punctuation">{</span>    
+       a<span class="token operator">:</span><span class="token operator">&lt;</span>uninitalized<span class="token operator">&gt;</span> <span class="token punctuation">,</span>
+       b<span class="token operator">:</span><span class="token operator">&lt;</span>uninitalized<span class="token operator">&gt;</span><span class="token punctuation">,</span>
+       foo<span class="token operator">:</span><span class="token operator">&lt;</span>func<span class="token operator">&gt;</span>
+     <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    outer<span class="token operator">:</span><span class="token keyword">null</span>
+  <span class="token punctuation">}</span>
+ <span class="token punctuation">}</span>
+ 
+FunctionContext <span class="token operator">=</span> <span class="token punctuation">{</span>
+   lexicalEnviroment<span class="token operator">:</span><span class="token punctuation">{</span>
+      enviromentRecord<span class="token operator">:</span><span class="token punctuation">{</span>    
+        c<span class="token operator">:</span><span class="token operator">&lt;</span>uninitalized<span class="token operator">&gt;</span> <span class="token punctuation">,</span>
+        d<span class="token operator">:</span><span class="token operator">&lt;</span>uninitalized<span class="token operator">&gt;</span><span class="token punctuation">,</span>
+        arguments<span class="token operator">:</span><span class="token punctuation">{</span>
+          <span class="token number">0</span><span class="token operator">:</span><span class="token number">1</span><span class="token punctuation">,</span>
+          <span class="token number">1</span><span class="token operator">:</span><span class="token number">2</span><span class="token punctuation">,</span>
+          length<span class="token operator">:</span><span class="token number">2</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    outer<span class="token operator">:</span>globalText
+<span class="token punctuation">}</span> 
+</code></pre></div><p>声明提升和作用域的相关内容在第一篇文章已经讲过了，此处不再赘述。<a href="https://segmentfault.com/a/1190000022553827" target="_blank" rel="noopener noreferrer">JavaScript基础一：声明提升与作用域<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></p> <h4 id="创建变量环境组件"><a href="#创建变量环境组件" class="header-anchor">#</a> 创建变量环境组件</h4> <p>在执行上下文的创建阶段，变量环境组件主要是针对var关键定义的变量做一次初始化，即我们常提到的变量声明提升。</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code> console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">// undefined</span>
+ <span class="token keyword">var</span> a <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> 
+ <span class="token keyword">function</span> <span class="token function">foo</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+  <span class="token keyword">var</span> b <span class="token operator">=</span> <span class="token number">2</span><span class="token punctuation">;</span>
+ <span class="token punctuation">}</span>
+ <span class="token function">foo</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre></div><p>则变量环境组件的数据结构如下</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code> globalContext <span class="token operator">=</span> <span class="token punctuation">{</span>
+   variableEnviroment<span class="token operator">:</span><span class="token punctuation">{</span>
+     a<span class="token operator">:</span><span class="token keyword">undefined</span>
+   <span class="token punctuation">}</span>
+ <span class="token punctuation">}</span>
+ 
+ FunctionContext <span class="token operator">=</span> <span class="token punctuation">{</span>
+   variableEnviroment<span class="token operator">:</span><span class="token punctuation">{</span>
+     b<span class="token operator">:</span><span class="token keyword">undefined</span>
+   <span class="token punctuation">}</span>
+ <span class="token punctuation">}</span>
+
+</code></pre></div><h4 id="确定this指向"><a href="#确定this指向" class="header-anchor">#</a> 确定This指向</h4> <p>这个过程也可以参考我的上一篇文章<a href="https://segmentfault.com/a/1190000022560855" target="_blank" rel="noopener noreferrer">JavaScript基础二：理解执行栈与This指向<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></p> <p>创建阶段的知识讲完了，让我们用一段代码来梳理下以上知识点</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code> <span class="token keyword">let</span> a <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+ <span class="token keyword">const</span> b <span class="token operator">=</span> <span class="token number">2</span><span class="token punctuation">;</span>
+ <span class="token keyword">var</span> c <span class="token operator">=</span> <span class="token number">3</span><span class="token punctuation">;</span>
+ <span class="token keyword">function</span> <span class="token function">foo</span><span class="token punctuation">(</span><span class="token parameter">e<span class="token punctuation">,</span>f</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+   <span class="token keyword">var</span> d <span class="token operator">=</span> <span class="token number">4</span><span class="token punctuation">;</span>
+   console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>e<span class="token punctuation">)</span><span class="token punctuation">;</span>
+ <span class="token punctuation">}</span>
+ <span class="token function">foo</span><span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">,</span><span class="token number">3</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre></div><p>首先这里存在全局执行上下文和函数执行上下文，无论是全局执行上下文还是函数执行上下文，都要做<strong>创建词法环境组件、创建变量环境组件、确定This指向</strong>这三件事情。</p> <p>词法环境组件包括环境记录器和外部引用。环境记录器要做的事情是<strong>扫描<code>let</code>、<code>const</code>定义的变量，函数声明提升、函数参数存储（仅在函数执行上下文中做）</strong>。</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code>globalText <span class="token operator">=</span> <span class="token punctuation">{</span>
+ lexicalEnviroment<span class="token operator">:</span><span class="token punctuation">{</span>
+   a<span class="token operator">:</span><span class="token operator">&lt;</span>uninitalized<span class="token operator">&gt;</span><span class="token punctuation">,</span>
+   b<span class="token operator">:</span><span class="token operator">&lt;</span>uninitalized<span class="token operator">&gt;</span><span class="token punctuation">,</span>
+   foo<span class="token operator">:</span><span class="token operator">&lt;</span>func<span class="token operator">&gt;</span><span class="token punctuation">,</span>
+   outer<span class="token operator">:</span><span class="token keyword">null</span>
+ <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>而创建变量环境组件时主要做<code>var</code>关键字定义的变量声明提升，这一步比较简单。全局执行上下文的This指向到window。</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code>globalText <span class="token operator">=</span> <span class="token punctuation">{</span>
+ lexicalEnviroment<span class="token operator">:</span><span class="token punctuation">{</span>
+   a<span class="token operator">:</span><span class="token operator">&lt;</span>uninitalized<span class="token operator">&gt;</span><span class="token punctuation">,</span>
+   b<span class="token operator">:</span><span class="token operator">&lt;</span>uninitalized<span class="token operator">&gt;</span><span class="token punctuation">,</span>
+   foo<span class="token operator">:</span><span class="token operator">&lt;</span>func<span class="token operator">&gt;</span><span class="token punctuation">,</span>
+   outer<span class="token operator">:</span><span class="token keyword">null</span>
+ <span class="token punctuation">}</span><span class="token punctuation">,</span>
+ variableEnviroment<span class="token operator">:</span><span class="token punctuation">{</span>
+   c<span class="token operator">:</span><span class="token keyword">undefined</span>
+ <span class="token punctuation">}</span><span class="token punctuation">,</span>
+ ThisBinding<span class="token operator">:</span>window
+ <span class="token punctuation">}</span>
+</code></pre></div><p>同理我们可以写出函数执行上下文在创建阶段所做的事情，注意在函数执行上下文中创建词法环境组件还多做一件事：函数参数的存储</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code> globalText <span class="token operator">=</span> <span class="token punctuation">{</span>
+   lexicalEnviroment<span class="token operator">:</span><span class="token punctuation">{</span>
+     a<span class="token operator">:</span><span class="token operator">&lt;</span>uninitalized<span class="token operator">&gt;</span><span class="token punctuation">,</span>
+     b<span class="token operator">:</span><span class="token operator">&lt;</span>uninitalized<span class="token operator">&gt;</span><span class="token punctuation">,</span>
+     foo<span class="token operator">:</span><span class="token operator">&lt;</span>func<span class="token operator">&gt;</span><span class="token punctuation">,</span>
+     outer<span class="token operator">:</span><span class="token keyword">null</span>
+   <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  variableEnviroment<span class="token operator">:</span><span class="token punctuation">{</span>
+     c<span class="token operator">:</span><span class="token keyword">undefined</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  ThisBinding<span class="token operator">:</span>window
+ <span class="token punctuation">}</span>
+   
+ FunctionText <span class="token operator">=</span> <span class="token punctuation">{</span>
+   lexicalEnviroment<span class="token operator">:</span><span class="token punctuation">{</span>
+     arguments<span class="token operator">:</span><span class="token punctuation">{</span>
+      <span class="token number">0</span><span class="token operator">:</span><span class="token number">2</span><span class="token punctuation">,</span>
+      <span class="token number">1</span><span class="token operator">:</span><span class="token number">3</span><span class="token punctuation">,</span>
+      length<span class="token operator">:</span><span class="token number">2</span>
+     <span class="token punctuation">}</span>
+     outer<span class="token operator">:</span>globalContext
+   <span class="token punctuation">}</span><span class="token punctuation">,</span>
+   variableEnviroment<span class="token operator">:</span><span class="token punctuation">{</span>
+     d<span class="token operator">:</span><span class="token keyword">undefined</span>
+   <span class="token punctuation">}</span><span class="token punctuation">,</span>
+   ThisBinding<span class="token operator">:</span>window
+  <span class="token punctuation">}</span>
+</code></pre></div><h3 id="执行阶段"><a href="#执行阶段" class="header-anchor">#</a> 执行阶段</h3> <p>相比起创建阶段，执行阶段做的内容就简单很多了，直接做一些赋值就可以了。此处不再做赘述。</p> <h2 id="小结"><a href="#小结" class="header-anchor">#</a> 小结</h2> <ol><li>执行上下文包括创建阶段和执行阶段，创建阶段主要做三件事情：<strong>创建词法环境组件，创建变量环境组件，确定This指向</strong>。</li> <li>词法环境组件包括<strong>环境记录器</strong>和<strong>外部引用</strong>，外部引用也可以通俗认为是作用域</li> <li>环境记录器包括<code>let</code>和<code>const</code>声明的变量初始化，函数声明提升、函数参数。</li></ol> <blockquote><p>参考文章：https://juejin.im/post/5ba32171f265da0ab719a6d7</p></blockquote></div> <footer class="page-edit"><!----> <!----></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/blog/JavaScript基础/正则表达式高级.html" class="prev">
+        创作中...
+      </a></span> <span class="next"><a href="/blog/JavaScript基础/理解执行栈与This指向.html">
+        理解执行栈与This指向
+      </a>
+      →
+    </span></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/blog/assets/js/app.651a061f.js" defer></script><script src="/blog/assets/js/2.f6cfd785.js" defer></script><script src="/blog/assets/js/12.18bd0417.js" defer></script>
+  </body>
+</html>

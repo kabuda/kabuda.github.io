@@ -1,6 +1,5 @@
 ---
 home: true
-heroImage: /favicon.ico
 actionText: 快去看看 →
 actionLink: /guide/
 features:
