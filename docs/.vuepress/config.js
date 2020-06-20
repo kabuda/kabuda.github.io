@@ -8,7 +8,7 @@ module.exports = {
   themeConfig: {
     nav: [
       { text: '首页', link: '/' },
-      { text: '博客', link: '/Vue源码系列/双向数据绑定/' },
+      { text: '博客', link: '/01.书写进度/总体进度' },
       { text: 'github', link: 'https://github.com/kabuda/kabuda.github.io' },
     ],
     sidebar: false

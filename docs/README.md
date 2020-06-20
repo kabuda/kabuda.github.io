@@ -1,7 +1,7 @@
 ---
 home: true
 actionText: 快去看看 →
-actionLink: /Vue源码系列/双向数据绑定
+actionLink: /01.书写进度/总体进度
 features:
 - title: 前端基础知识
   details: 坚持记录JavaScript基础知识/Vue源码/https/webpack学习笔记等内容。
