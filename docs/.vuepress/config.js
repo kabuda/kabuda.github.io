@@ -1,27 +1,34 @@
 module.exports = {
-    title: 'wuquan的博客',
-    base:"/blog/",
-    description: '一个学不好吉他的资深前端Jay迷',
-    head: [
+  title: 'wuquan的博客',
+  base: "/blog/",
+  description: '一个成长中的小前端',
+  dest: './blog',
+  ga: '',
+  evergreen: true,
+  themeConfig: {
+    nav: [
+      { text: '首页', link: '/' },
+      { text: '博客', link: '/01.书写进度/总体进度' },
+      { text: 'github', link: 'https://github.com/kabuda/kabuda.github.io' },
     ],
-    dest: './blog',
-    ga: '',
-    evergreen: true,
-    themeConfig: {
-        nav: [
-          { text: '首页', link: '/' },
-          { text: '博客', link: '/guide/' },
-          { text:'归档', link:'/artichve'},
-          { text: 'github', link: 'https://github.com/kabuda/kabuda.github.io' },
-        ],
-        sidebarDepth: 2,
-        sidebar: [
-          {
-          title: 'JavaScript基础知识',
-          collapsable: true,
-          children: ['/guide/'] 
-         }          
-        ]
-    },
-        
-  }
+    sidebar: false
+    // sidebarDepth: 2,
+    // sidebar: {
+    //   '/Vue源码系列/': [
+    //     {
+    //       title: "Vue源码系列",
+    //       collapsable: false,
+    //       children: [
+    //         { title: "双向数据绑定", path: "/双向数据绑定/" },
+    //         { title: "依赖收集", path: "/依赖收集/" }
+    //         // { title: "computed与watch", path: "/computed与watch/" },
+    //         // { title: "Vue-router原理", path: "/Vue-router原理/" }
+
+    //       ]
+    //     }
+    //   ]
+    // }
+  },
+  plugins:['autobar']
+
+}

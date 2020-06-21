@@ -20,5 +20,9 @@
   "bugs": {
     "url": "https://github.com/kabuda/kabuda.github.io/issues"
   },
-  "homepage": "https://github.com/kabuda/kabuda.github.io#readme"
+  "homepage": "https://github.com/kabuda/kabuda.github.io#readme",
+  "devDependencies": {
+    "vuepress": "^1.5.2",
+    "vuepress-plugin-autobar": "github:boboidream/vuepress-bar"
+  }
 }
