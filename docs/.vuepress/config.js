@@ -11,14 +11,15 @@ module.exports = {
         nav: [
           { text: '首页', link: '/' },
           { text: '博客', link: '/guide/' },
-          { text: 'github', link: 'https://github.com/kabuda/blog' },
+          { text:'归档', link:'/artichve'},
+          { text: 'github', link: 'https://github.com/kabuda/kabuda.github.io' },
         ],
         sidebarDepth: 2,
         sidebar: [
           {
-          title: 'Guide',
-          collapsable: false,
-          children: ['/guide/']
+          title: 'JavaScript基础知识',
+          collapsable: true,
+          children: ['/guide/'] 
          }          
         ]
     },
