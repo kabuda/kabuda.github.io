@@ -11,5 +11,5 @@ features:
 
 - title: 告别间歇性踌躇满志
   details: 生活中充满了间歇性踌躇满志与持续性混吃等死，请告别他们。
-footer: MIT Licensed | Copyright © 2018-present xxxxxx
+footer: MIT Licensed | Copyright © 2020-present
 ---
