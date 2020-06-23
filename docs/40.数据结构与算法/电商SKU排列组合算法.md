@@ -131,4 +131,5 @@ let combine = function (n, k) {
 }
 ```
 
-> 参考链接：https://juejin.im/post/5ee6d9026fb9a047e60815f1
+> 参考链接：[前端电商 sku 的全排列算法很难吗？学会这个套路，彻底掌握排列组合](https://juejin.im/post/5ee6d9026fb9a047e60815f1)
+
