@@ -1,6 +1,6 @@
 ---
 home: true
-actionText: 快去看看 →
+actionText: Get Start →
 actionLink: /01.书写进度/总体进度
 features:
 - title: 前端基础知识
