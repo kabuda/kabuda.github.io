@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/kabuda/kabuda.github.io#readme",
   "devDependencies": {
-    "vuepress": "^1.5.2",
+    "vuepress": "^1.9.7",
     "vuepress-plugin-autobar": "github:boboidream/vuepress-bar"
   }
 }
